@@ -57,15 +57,15 @@ Terraform](https://blog.gruntwork.io/a-comprehensive-guide-to-terraform-b3d32832
 
 The infrastructure is deployed across multiple environments:
 
-* **dev** (account id: `805321607950`): Sandbox environment. 
+* **dev** (account id): Sandbox environment. 
 
-* **prod** (account id: `608056288583`): Production environment. 
+* **prod** (account id): Production environment. 
 
-* **security** (account id: `296216577101`): All IAM users and permissions are defined in this account. 
+* **security** (account id): All IAM users and permissions are defined in this account. 
 
-* **shared-services** (account id: `451511469926`): DevOps tooling, such as the OpenVPN server. 
+* **shared-services** (account id): DevOps tooling, such as the OpenVPN server. 
 
-* **stage** (account id: `645769240473`): Pre-production environment. 
+* **stage** (account id): Pre-production environment. 
 
 
 
