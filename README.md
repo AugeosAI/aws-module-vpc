@@ -27,9 +27,9 @@ in the diagram.  Here is an overview of what's actually deployed:
 
 ## Infrastructure as code
 
-All of Allied World's infrastructure is managed as **code**, primarily using [Terraform](https://www.terraform.io/). 
+The infrastructure is managed as **code**, primarily using [Terraform](https://www.terraform.io/). 
 That is, instead of clicking around a web UI or SSHing to a server and manually executing commands, the idea behind 
-infrastructure as code (IAC) is that you write code to define your infrastructure and you let an automated tool (e.g.,
+infrastructure as code (IaC) is that you write code to define your infrastructure and you let an automated tool (e.g.,
 Terraform) apply the code changes to your infrastructure. This has a number of benefits:
 
 * You can automate your entire provisioning and deployment process, which makes it much faster and more reliable than 
@@ -43,17 +43,9 @@ Terraform) apply the code changes to your infrastructure. This has a number of b
 * You can validate each infrastructure change through code reviews and automated tests.
 
 * You can package your infrastructure as reusable, documented, battle-tested modules that make it easier to scale and 
-  evolve your infrastructure. In fact, much of the infrastructure code in this architecture is powered by modules
-  created by Gruntwork, which are called [Infrastructure 
-  Packages](https://blog.gruntwork.io/gruntwork-infrastructure-packages-7434dc77d0b1).
+  evolve your infrastructure. 
 
-For more info on Infrastructure as Code and Terraform, check out [A Comprehensive Guide to 
-Terraform](https://blog.gruntwork.io/a-comprehensive-guide-to-terraform-b3d32832baca).
-
-  
-  
-  
-## Environments
+# Environments
 
 The infrastructure is deployed across multiple environments:
 
@@ -73,16 +65,11 @@ The infrastructure is deployed across multiple environments:
 
 ## AWS accounts
 
-Your infrastructure is deployed across multiple AWS accounts. For example, the staging environment is in one account,
+The infrastructure is deployed across multiple AWS accounts. For example, the development environment is in one account,
 the production environment in another account, the DevOps tooling in yet another account, and so on. This gives you 
 better isolation between environments so that if you break something in one environment (e.g., staging)—or worse yet, a 
 hacker breaks into that environment—it should have no effect on your other environments (e.g., prod). It also gives you
-better control over what resources each employee can access.
-
-Check out [Accounts and Auth](08-accounts-and-auth.md) for more info on the AWS accounts that have been set up and how
-to authenticate to and switch between them.
-
-
+better control over what resources each employee can access. This concept is known as defense in depth. 
 
 
 ## VPCs and subnets
@@ -97,14 +84,7 @@ routing for its IP address.
 * *Private subnets* are only accessible from within the VPC. 
 
 Just about everything in this infrastructure is deployed in private subnets to reduce the surface area to attackers. 
-The only exceptions are load balancers and the [OpenVPN server](#openvpn-server), 
-both of which are described below. 
-
-To learn more about VPCs and subnets, check out the Gruntwork [vpc-app module 
-documentation](https://github.com/gruntwork-io/module-vpc/tree/master/modules/vpc-app).
-
-
-
+The only exceptions are load balancers and the OpenVPN server, both of which are described below. 
 
 ## Load balancers
 
@@ -115,8 +95,7 @@ availability. The load balancers being used are:
 * [Application Load Balancer (ALB)](https://aws.amazon.com/elasticloadbalancing/applicationloadbalancer/): The ALB is a
   load balancer managed by AWS that is designed for routing HTTP and HTTPS traffic. The advantage of using a managed
   service is that AWS takes care of fault tolerance, security, and scaling the load balancer for you automatically.
-  Check out [module-load-balancer](https://github.com/gruntwork-io/module-load-balancer/) for more info on how to use 
-  the ALB.
+ 
 
 We also deploy an *internal* load balancer in the private subnets. This load balancer is not accessible to the public.
 Instead, it's used as a simple way to do service discovery: every backend service registers with the load balancer at a
@@ -127,7 +106,7 @@ particular path, and all services know to send requests to this load balancer to
 
 ## Docker clusters
 
-Your application code is packaged into [Docker containers](http://docker.com/) and deployed across an Amazon
+The application code is packaged into [Docker containers](http://docker.com/) and deployed across an Amazon
 [EC2 Container Service (ECS)](https://aws.amazon.com/ecs/) cluster.
 The advantage of Docker is that it allows you to package
 your code so that it runs exactly the same way in all environments (dev, stage, prod). The advantage of a Docker 
@@ -137,9 +116,6 @@ redeploy containers that crashed.
 
 For a quick intro to Docker, see [Running microservices on AWS using Docker, Terraform, and 
 ECS](http://www.ybrikman.com/writing/2016/03/31/infrastructure-as-code-microservices-aws-docker-terraform-ecs/).
-For more info on using ECS, see [module-ecs](https://github.com/gruntwork-io/module-ecs).
-
-
 
 
 ## Data stores
@@ -147,36 +123,26 @@ For more info on using ECS, see [module-ecs](https://github.com/gruntwork-io/mod
 The infrastructure includes the following data stores:
 
 1. **Postgres**: Postgres is deployed using [Amazon's Relational Database Service 
-  (RDS)](https://aws.amazon.com/rds/), including automatic failover, backups, and replicas. Check out 
-  [module-data-storage](https://github.com/gruntwork-io/module-data-storage) for more info.
-
-1. **Memcached**: Memcached is deployed using [Amazon's ElastiCache 
-  Service](https://aws.amazon.com/elasticache/), including automatic failover, backups, and replicas. Check out 
-  [module-cache](https://github.com/gruntwork-io/module-cache) for more info.
-
+  (RDS)](https://aws.amazon.com/rds/), including automatic failover, backups, and replicas. 
+  
+  
+  1. **Memcached**: Memcached is deployed using [Amazon's ElastiCache 
+  Service](https://aws.amazon.com/elasticache/), including automatic failover, backups, and replicas. 
 
 
 
 ## Lambda
 
 We have deployed several example [Lambda functions](https://aws.amazon.com/lambda/) to show how you can build 
-serverless applications. Check out the [package-lambda 
-docs](https://github.com/gruntwork-io/package-lambda/tree/master/modules/lambda) for background info.
-
-
-
+serverless applications. 
 
 ## OpenVPN server
 
 To reduce your surface area to attackers, just about all of the resources in this infrastructure run in private subnets, 
-which are not accessible from the public Internet at all. To allow Allied World's employees to access these 
+which are not accessible from the public Internet at all. To allow developers access to these 
 private resources, we expose a single server publicly: an [OpenVPN server](https://openvpn.net/). Once you connect to 
 the server using a VPN client, you are "in the network", and will be able to access the private resources (e.g., you 
 will be able to SSH to your EC2 Instances).
-
-For more info, see [SSH and VPN](07-ssh-vpn.md) and [package-openvpn](https://github.com/gruntwork-io/package-openvpn/).
-
-
 
 
 ## CircleCI
@@ -184,32 +150,17 @@ For more info, see [SSH and VPN](07-ssh-vpn.md) and [package-openvpn](https://gi
 We have set up [CircleCi](https://circleci.com/) as a Continuous Integration (CI) server. After every commit, a CircleCi 
 job runs your build, tests, packaging, and automated deployment steps.
  
-For more info, see [Build, tests, and deployment (CI/CD)](05-ci-cd.md) and
-[module-ci](https://github.com/gruntwork-io/module-ci).
-
-
-
-
 ## Monitoring, log aggregation, alerting
 
 You can find metrics, log files from all your servers, and subscribe to alert notifications using [Amazon 
 CloudWatch](https://aws.amazon.com/cloudwatch/).  
 
-For more info, see [Monitoring, Alerting, and Logging](06-monitoring-alerting-logging.md) and
-[module-aws-monitoring](https://github.com/gruntwork-io/module-aws-monitoring).   
-
-
-
 
 ## DNS and TLS
 
-We are using [Amazon Route 53](https://aws.amazon.com/route53/) to configure DNS entries for all your services. We
-have configured SSL/TLS certificates for your domain names using [Amazon's Certificate Manager 
+[Amazon Route 53](https://aws.amazon.com/route53/) is used to configure DNS entries for all your services. We
+have configured SSL/TLS certificates for domain names using [Amazon's Certificate Manager 
 (ACM)](https://aws.amazon.com/certificate-manager/), which issues certificates that are free and renew automatically.
-
-For more info, see [What's deployed](02-whats-deployed.md).
-
-
 
 
 ## Static content, S3, and CloudFront
@@ -218,42 +169,25 @@ All static content (e.g., images, CSS, JS) is stored in [Amazon S3](https://aws.
 [CloudFront](https://aws.amazon.com/cloudfront/) CDN. This allows you to offload all the work of serving static content 
 from your app server and reduces latency for your users.
 
-For more info, see [What's deployed](02-whats-deployed.md) and
-[package-static-assets](https://github.com/gruntwork-io/package-static-assets).
-
-
-
-
 ## Security
 
-We have configured security best practices in every aspect of this infrastructure:
+Security best practices is built in every aspect of this infrastructure:
  
-* **Network security**: see [VPCs and subnets](#vpcs-and-subnets).
+* **Network security**
 
-* **Server access**: see [SSH and VPN](07-ssh-vpn.md).
+* **Server access**
 
-* **Application secrets**: see the GruntKMS section of [Running an App in the Dev Environment](04-dev-environment.md)
-  and [gruntkms](https://github.com/gruntwork-io/gruntkms).
+* **Application secrets**
  
-* **User accounts**: see [Accounts and Auth](08-accounts-and-auth.md).
+* **User accounts**
  
-* **Auditing**: see the [CloudTrail module](https://github.com/gruntwork-io/module-security/tree/master/modules/cloudtrail).
+* **Auditing**
 
-* **Intrusion detection**: see the [fail2ban module](https://github.com/gruntwork-io/module-security/tree/master/modules/fail2ban).
+* **Intrusion detection**
 
-* **Security updates**: see the [auto-update module](https://github.com/gruntwork-io/module-security/tree/master/modules/auto-update).
+* **Security updates**
 
-* **OS hardening**: see the [os-hardening module](https://github.com/gruntwork-io/module-security/tree/master/modules/os-hardening).
+* **OS hardening**
 
-* **End-to-end encryption**: all data in transit is encrypted using TLS and all data at rest lives in encrypted volumes
-  and data stores. See [Running an App in the Dev Environment](04-dev-environment.md).
+* **End-to-end encryption**
 
-Check out [Gruntwork Security Best Practices](https://docs.google.com/document/d/e/2PACX-1vTikva7hXPd2h1SSglJWhlW8W6qhMlZUxl0qQ9rUJ0OX22CQNeM-91w4lStRk9u2zQIn6lPejUbe-dl/pub) for more info.
-
-
-
-
-
-## Next steps
-
-Next up, let's have a look at [What's deployed](02-whats-deployed.md).
