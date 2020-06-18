@@ -7,7 +7,7 @@ This reference architecture deployed on top of [Amazon Web Services (AWS)](https
 * Images - Architecture diagrams
 * Modules - Infrastructure orchestration and templates
 
-![Infrastructure](images/reference-infrastructure.png)
+![Infrastructure](images/reference-architecture.png)
 
 ## Getting started
 To use this repo first, you should get familiar with [Terraform](https://terraform.io).
