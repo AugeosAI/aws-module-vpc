@@ -4,7 +4,7 @@ This reference architecture deployed on top of [Amazon Web Services (AWS)](https
 
 ![Infrastructure](images/reference-architecture.png)
 
-Note that the Reference Architecture is highly customizable, so what's deployed may be a bit different than what's
+The Reference Architecture is highly customisable, so what's deployed may be a bit different than what's
 in the diagram.  Here is an overview of what's actually deployed:
 
 1. [Infrastructure as code](#infrastructure-as-code)
