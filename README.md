@@ -88,7 +88,7 @@ The only exceptions are load balancers and the OpenVPN server, both of which are
 ## Load balancers
 
 Traffic from the public Internet (e.g., requests from your users) initially goes to a *public load balancer*, which 
-proxies the traffic to your apps. This allows you to run multiple copies of your application for scalability and high 
+proxies the traffic to the apps apis. This allows you to run multiple copies of application for scalability and high 
 availability. The load balancers being used are:
 
 * [Application Load Balancer (ALB)](https://aws.amazon.com/elasticloadbalancing/applicationloadbalancer/): The ALB is a
