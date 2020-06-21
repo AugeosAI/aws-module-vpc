@@ -114,7 +114,7 @@ wherever resources are available. Moreover, ECS can automatically scale your app
 redeploy containers that crashed.
 
 For a quick intro to Docker, see [Running microservices on AWS using Docker, Terraform, and 
-ECS](http://www.ybrikman.com/writing/2016/03/31/infrastructure-as-code-microservices-aws-docker-terraform-ecs/).
+ECS]().
 
 
 ## Data stores
